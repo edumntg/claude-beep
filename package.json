@@ -1,6 +1,6 @@
 {
   "name": "claude-beep",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Two-way notifications for Claude Code via Telegram, Discord, and Slack",
   "type": "module",
   "bin": {
