@@ -36,16 +36,30 @@ Claude Code sessions can take minutes. Sitting at the terminal waiting for them 
 
 ## Install
 
+**From GitHub** (works today, no npm publish required):
+
+```bash
+npm install -g github:edumntg/claude-beep
+```
+
+That clones the repo, builds it, and puts `claude-beep` on your `PATH`. Verify with `claude-beep --version`.
+
+**From npm** (once published):
+
+```bash
+npm install -g claude-beep
+```
+
+**For development** — clone and link:
+
 ```bash
 git clone https://github.com/edumntg/claude-beep.git
 cd claude-beep
 npm install
-npm link            # puts `claude-beep` on your PATH
+npm link
 ```
 
-Requires Node 20+ and Claude Code (any version with `hooks` support).
-
-> npm-published binary will land at `npm install -g claude-beep` once 1.0.0 ships to the registry.
+Requires **Node 20+** and **Claude Code** (any version with `hooks` support).
 
 ---
 
