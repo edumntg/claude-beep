@@ -329,6 +329,10 @@ async function maybePasteExcerpt(
     };
   } catch (err) {
     appendDaemonLog(`pastebin upload failed: ${(err as Error).message}`);
-    return message;
+    const preview = message.excerpt.slice(0, config.pastebin.preview_chars).trimEnd();
+    return {
+      ...message,
+      excerpt: `${preview} …\n\n(pastebin upload failed — message truncated)`,
+    };
   }
 }

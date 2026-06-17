@@ -1,5 +1,10 @@
 import type { Transport, SendTarget, SendResult, ChatMessage } from './types.js';
 
+// Telegram's sendMessage hard limit is 4096 characters for the `text` field.
+// We leave a small headroom for the truncation marker.
+const TELEGRAM_MAX_TEXT = 4096;
+const TRUNCATION_SUFFIX = '\n…[truncated]</blockquote>';
+
 function escapeHtml(text: string): string {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
@@ -29,6 +34,12 @@ export function renderTelegram(msg: ChatMessage): string {
   return lines.join('\n');
 }
 
+export function fitTelegramText(text: string, max = TELEGRAM_MAX_TEXT): string {
+  if (text.length <= max) return text;
+  const budget = max - TRUNCATION_SUFFIX.length;
+  return text.slice(0, budget) + TRUNCATION_SUFFIX;
+}
+
 interface TelegramSendResponse {
   ok: boolean;
   description?: string;
@@ -45,7 +56,7 @@ export class TelegramTransport implements Transport {
   async send(target: SendTarget, message: ChatMessage): Promise<SendResult> {
     if (!target.id) throw new Error('telegram: missing chat_id');
 
-    const text = renderTelegram(message);
+    const text = fitTelegramText(renderTelegram(message));
     const url = `https://api.telegram.org/bot${this.token}/sendMessage`;
     const res = await fetch(url, {
       method: 'POST',
