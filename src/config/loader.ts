@@ -42,6 +42,11 @@ export const FiltersSchema = z.object({
   notify_event_types: z
     .array(z.enum(['stop', 'notification', 'subagent-stop']))
     .default(['stop', 'subagent-stop']),
+  // When true, drop events from Claude sessions that were NOT started via
+  // `claude-beep run`. Hooks are registered globally in ~/.claude/settings.json,
+  // so every Claude Code session fires them; flip this on if you only want to
+  // be notified for sessions you explicitly wrapped.
+  only_wrapped_sessions: z.boolean().default(false),
 });
 
 export const SecuritySchema = z.object({

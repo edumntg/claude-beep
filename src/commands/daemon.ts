@@ -135,6 +135,7 @@ export async function daemonCommand(opts: DaemonOptions): Promise<void> {
       const verdict = shouldNotify(config.filters, {
         event_type: event.event_type,
         duration_seconds: duration,
+        wrapper_id: event.wrapper_id,
       });
       if (!verdict.allow) {
         appendDaemonLog(`filtered (${event.event_type}): ${verdict.reason}`);

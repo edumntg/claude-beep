@@ -29,6 +29,11 @@ filters:
   # Notify on Stop and SubagentStop by default. Suppress the noisy "Claude needs input"
   # (Notification) events. Add "notification" here if you want permission prompts in chat too.
   notify_event_types: ["stop", "subagent-stop"]
+  # Hooks are registered globally in ~/.claude/settings.json, so every Claude
+  # Code session fires them — including ones you didn't start with
+  # "claude-beep run". Flip this to true to suppress notifications from
+  # unwrapped sessions (events without CLAUDE_BEEP_WRAPPER_ID set).
+  only_wrapped_sessions: false
 
 security:
   # Redact common token patterns from outbound messages.
