@@ -8,6 +8,7 @@ const baseFilters = {
   notify_event_types: ['stop', 'notification', 'subagent-stop'] as Array<
     'stop' | 'notification' | 'subagent-stop'
   >,
+  only_wrapped_sessions: false,
 };
 
 describe('shouldNotify', () => {
@@ -55,6 +56,25 @@ describe('shouldNotify', () => {
       { event_type: 'notification', duration_seconds: 1 },
     );
     expect(result.allow).toBe(true);
+  });
+
+  it('drops events from unwrapped sessions when only_wrapped_sessions is true', () => {
+    const filters = { ...baseFilters, only_wrapped_sessions: true };
+    const result = shouldNotify(filters, { event_type: 'stop' });
+    expect(result.allow).toBe(false);
+    expect(result.reason).toMatch(/claude-beep run/);
+  });
+
+  it('allows events from wrapped sessions when only_wrapped_sessions is true', () => {
+    const filters = { ...baseFilters, only_wrapped_sessions: true };
+    const result = shouldNotify(filters, { event_type: 'stop', wrapper_id: 'abc-123' });
+    expect(result.allow).toBe(true);
+  });
+
+  it('only_wrapped_sessions takes precedence over notify_on_error', () => {
+    const filters = { ...baseFilters, only_wrapped_sessions: true, notify_on_error: true };
+    const result = shouldNotify(filters, { event_type: 'stop', is_error: true });
+    expect(result.allow).toBe(false);
   });
 
   it('bypasses filters for errors when notify_on_error is true', () => {

@@ -5,6 +5,7 @@ export interface FilterContext {
   duration_seconds?: number;
   is_error?: boolean;
   now?: Date;
+  wrapper_id?: string;
 }
 
 export interface FilterResult {
@@ -13,6 +14,12 @@ export interface FilterResult {
 }
 
 export function shouldNotify(filters: Filters, ctx: FilterContext): FilterResult {
+  // Checked before the error bypass: if you've opted out of unwrapped sessions
+  // you don't want their errors either.
+  if (filters.only_wrapped_sessions && !ctx.wrapper_id) {
+    return { allow: false, reason: 'session not started via `claude-beep run`' };
+  }
+
   if (ctx.is_error && filters.notify_on_error) return { allow: true };
 
   // Event-type allowlist. Defaults to ['stop'] so we suppress Notification and
